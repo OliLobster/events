@@ -9,6 +9,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -34,19 +35,16 @@ public class SearchItem extends HttpServlet {
 		// TODO Auto-generated method stub
 		response.setContentType("application/json");
 		PrintWriter writer = response.getWriter();
-		JSONObject obj = new JSONObject();
 		
-		if (request.getParameter("username") != null) {
-			String username = request.getParameter("username");
-			
-			try {
-				obj.put("username", username);
-			} catch (JSONException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+		JSONArray array = new JSONArray();
+		try {
+			array.put(new JSONObject().put("username", "abcd"));
+			array.put(new JSONObject().put("username", "1234"));
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
-		writer.print(obj);	
+		writer.print(array);
 	
 	}
 
