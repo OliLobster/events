@@ -1,5 +1,20 @@
 package rpc;
 
-public class RpcHelper {
+import java.io.IOException;
 
+import javax.servlet.http.HttpServletResponse;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
+
+public class RpcHelper {
+	// Writes a JSONArray to http response.
+		public static void writeJsonArray(HttpServletResponse response, JSONArray array) throws IOException{
+
+		}
+
+	              // Writes a JSONObject to http response.
+		public static void writeJsonObject(HttpServletResponse response, JSONObject obj) throws IOException {	
+
+		}
 }
