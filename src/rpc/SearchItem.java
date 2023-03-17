@@ -9,6 +9,9 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 /**
  * Servlet implementation class SearchItem
  */
@@ -29,12 +32,22 @@ public class SearchItem extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
-		response.setContentType("text/html");
+		response.setContentType("application/json");
 		PrintWriter writer = response.getWriter();
+		JSONObject obj = new JSONObject();
 		
-		writer.print("<html><body>");
-		writer.print("<h1>Hello World</h1>");
-		writer.print("</body></html>");	
+		if (request.getParameter("username") != null) {
+			String username = request.getParameter("username");
+			
+			try {
+				obj.put("username", username);
+			} catch (JSONException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		writer.print(obj);	
+	
 	}
 
 	/**
