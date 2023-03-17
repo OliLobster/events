@@ -33,8 +33,6 @@ public class RecommendItem extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
-		response.setContentType("application/json");
-		PrintWriter writer = response.getWriter();
 		
 		JSONArray array = new JSONArray();
 		try {
@@ -43,7 +41,7 @@ public class RecommendItem extends HttpServlet {
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}
-		writer.print(array);
+		RpcHelper.writeJsonArray(response, array);
 	}
 
 	/**
