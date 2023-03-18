@@ -18,6 +18,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import entity.Item;
+import entity.Item.ItemBuilder;
 
 public class TicketMasterClient {
 	private static final String HOST = "https://app.ticketmaster.com";
@@ -88,8 +89,31 @@ public class TicketMasterClient {
 	// Convert JSONArray to a list of item objects.
 		private List<Item> getItemList(JSONArray events) throws JSONException {
 			List<Item> itemList = new ArrayList<>();
-
+			for (int i = 0; i < events.length(); ++i) {
+				JSONObject event = events.getJSONObject(i);
+				
+				ItemBuilder builder = new ItemBuilder();
+				if (!event.isNull("id")) {
+					builder.setItemId(event.getString("id"));
+				}
+				if (!event.isNull("name")) {
+					builder.setName(event.getString("name"));
+				}
+				if (!event.isNull("url")) {
+					builder.setUrl(event.getString("url"));
+				}
+				if (!event.isNull("distance")) {
+					builder.setDistance(event.getDouble("distance"));
+				}
+				
+				builder.setAddress(getAddress(event));
+				builder.setCategories(getCategories(event));
+				builder.setImageUrl(getImageUrl(event));
+				
+				itemList.add(builder.build());
+			}
 			return itemList;
+
 		}
 
 		/**
