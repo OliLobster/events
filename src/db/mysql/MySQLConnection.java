@@ -13,38 +13,68 @@ import entity.Item;
 import external.TicketMasterClient;
 
 public class MySQLConnection implements DBConnection {
-	   private Connection conn;
-	   
-	   public MySQLConnection() {
-	  	 try {
-	  		 Class.forName("com.mysql.cj.jdbc.Driver").getConstructor().newInstance();
-	  		 conn = DriverManager.getConnection(MySQLDBUtil.URL);
-	  		
-	  	 } catch (Exception e) {
-	  		 e.printStackTrace();
-	  	 }
-	   }
-	   
-	   @Override
-	   public void close() {
-	  	 if (conn != null) {
-	  		 try {
-	  			 conn.close();
-	  		 } catch (Exception e) {
-	  			 e.printStackTrace();
-	  		 }
-	  	 }
-	   }
+	private Connection conn;
+
+	public MySQLConnection() {
+		try {
+			Class.forName("com.mysql.cj.jdbc.Driver").getConstructor().newInstance();
+			conn = DriverManager.getConnection(MySQLDBUtil.URL);
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	@Override
+	public void close() {
+		if (conn != null) {
+			try {
+				conn.close();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+	}
 
 	@Override
 	public void setFavoriteItems(String userId, List<String> itemIds) {
-		// TODO Auto-generated method stub
+		if (conn == null) {
+			System.err.println("DB connection failed");
+			return;
+		}
 
+		try {
+			String sql = "INSERT IGNORE INTO history(user_id, item_id) VALUES (?, ?)";
+			PreparedStatement ps = conn.prepareStatement(sql);
+			ps.setString(1, userId);
+			for (String itemId : itemIds) {
+				ps.setString(2, itemId);
+				ps.execute();
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 	@Override
 	public void unsetFavoriteItems(String userId, List<String> itemIds) {
-		// TODO Auto-generated method stub
+		if (conn == null) {
+			System.err.println("DB connection failed");
+			return;
+		}
+
+		try {
+			String sql = "DELETE FROM history WHERE user_id = ? AND item_id = ?";
+			PreparedStatement ps = conn.prepareStatement(sql);
+			ps.setString(1, userId);
+			for (String itemId : itemIds) {
+				ps.setString(2, itemId);
+				ps.execute();
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 
 	}
 
@@ -69,48 +99,48 @@ public class MySQLConnection implements DBConnection {
 	@Override
 	public List<Item> searchItems(double lat, double lon, String term) {
 		TicketMasterClient ticketMasterClient = new TicketMasterClient();
-	        List<Item> items = ticketMasterClient.search(lat, lon, term);
-	
-	        for(Item item : items) {
-		 saveItem(item);
-	        }
-	
-	        return items;
+		List<Item> items = ticketMasterClient.search(lat, lon, term);
+
+		for (Item item : items) {
+			saveItem(item);
+		}
+
+		return items;
 
 	}
 
 	@Override
 	public void saveItem(Item item) {
-		 if (conn == null) {
-	  		   System.err.println("DB connection failed");
-	  		   return;
-	  	         }
-	  	
-	  	 try {
-	  		 String sql = "INSERT IGNORE INTO items VALUES (?, ?, ?, ?, ?, ?, ?)";
-	  		 PreparedStatement ps = conn.prepareStatement(sql);
-	  		 ps.setString(1, item.getItemId());
-	  		 ps.setString(2, item.getName());
-	  		 ps.setDouble(3, item.getRating());
-	  		 ps.setString(4, item.getAddress());
-	  		 ps.setString(5, item.getImageUrl());
-	  		 ps.setString(6, item.getUrl());
-	  		 ps.setDouble(7, item.getDistance());
-	  		 ps.execute();
+		if (conn == null) {
+			System.err.println("DB connection failed");
+			return;
+		}
 
-	  		 sql = "INSERT IGNORE INTO categories VALUES(?, ?)";
-	  		 ps = conn.prepareStatement(sql);
-	                              // itemed 123
-	  		 ps.setString(1, item.getItemId());
-	                              // pop, music
-	  		 for(String category : item.getCategories()) {
-	  			 ps.setString(2, category);
-	  			 ps.execute();
-	  		 }
-	  		
-	  	 } catch (Exception e) {
-	  		 e.printStackTrace();
-	  	 }
+		try {
+			String sql = "INSERT IGNORE INTO items VALUES (?, ?, ?, ?, ?, ?, ?)";
+			PreparedStatement ps = conn.prepareStatement(sql);
+			ps.setString(1, item.getItemId());
+			ps.setString(2, item.getName());
+			ps.setDouble(3, item.getRating());
+			ps.setString(4, item.getAddress());
+			ps.setString(5, item.getImageUrl());
+			ps.setString(6, item.getUrl());
+			ps.setDouble(7, item.getDistance());
+			ps.execute();
+
+			sql = "INSERT IGNORE INTO categories VALUES(?, ?)";
+			ps = conn.prepareStatement(sql);
+			// itemed 123
+			ps.setString(1, item.getItemId());
+			// pop, music
+			for (String category : item.getCategories()) {
+				ps.setString(2, category);
+				ps.execute();
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 
 	}
 
