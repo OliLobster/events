@@ -194,19 +194,14 @@ public class TicketMasterClient {
 		}
 
 
-	/* to test TicketMasterClient class
-	public static void main(String[] args) {
-		TicketMasterClient client = new TicketMasterClient();
-		JSONArray events = client.search(37.38, -122.08, null);
-		try {
-		    for (int i = 0; i < events.length(); ++i) {
-		       JSONObject event = events.getJSONObject(i);
-		       System.out.println(event.toString(2));
-		    }
-		} catch (Exception e) {
-	                  e.printStackTrace();
-		}	
-	}
-	*/
+		public static void main(String[] args) {
+			TicketMasterClient client = new TicketMasterClient();
+			List<Item> events = client.search(37.38, -122.08, null);
+
+			for (Item event : events) {
+				System.out.println(event.toJSONObject());
+			}
+		}
+
 }
 
