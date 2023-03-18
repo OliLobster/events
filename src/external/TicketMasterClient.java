@@ -27,7 +27,7 @@ public class TicketMasterClient {
 	private static final int DEFAULT_RADIUS = 50;
 	private static final String API_KEY = "1mQX7mCvYfSWRkP72D7XMraCVEwTqIAY";
 	
-	public JSONArray search(double lat, double lon, String keyword) {
+	public List<Item> search(double lat, double lon, String keyword) {
 		if (keyword == null) {
 			keyword = DEFAULT_KEYWORD;
 		}
@@ -56,7 +56,8 @@ public class TicketMasterClient {
 			System.out.println("Response code: " + responseCode);
 
 			if (responseCode != 200) {
-				return new JSONArray();
+				return new ArrayList<>();
+
 			}
 
 			// Create a BufferedReader to help read text from a character-input stream.
@@ -78,13 +79,15 @@ public class TicketMasterClient {
 			JSONObject obj = new JSONObject(responseBody.toString());
 			if (!obj.isNull("_embedded")) {
 				JSONObject embedded = obj.getJSONObject("_embedded");
-				return embedded.getJSONArray("events");
+				return getItemList(embedded.getJSONArray("events"));
+
 			}
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}
 
-		return new JSONArray();
+		return new ArrayList<>();
+
 	}
 	// Convert JSONArray to a list of item objects.
 		private List<Item> getItemList(JSONArray events) throws JSONException {
