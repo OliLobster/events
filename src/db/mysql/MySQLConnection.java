@@ -82,8 +82,29 @@ public class MySQLConnection implements DBConnection {
 
 	@Override
 	public Set<String> getFavoriteItemIds(String userId) {
-		// TODO Auto-generated method stub
-		return null;
+		if (conn == null) {
+			return new HashSet<>();
+		}
+
+		Set<String> favoriteItems = new HashSet<>();
+
+		try {
+			String sql = "SELECT  item_id FROM history WHERE user_id = ?";
+			PreparedStatement stmt = conn.prepareStatement(sql);
+			stmt.setString(1, userId);
+
+			ResultSet rs = stmt.executeQuery();
+
+			while (rs.next()) {
+				String itemId = rs.getString("item_id");
+				favoriteItems.add(itemId);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+
+		return favoriteItems;
+
 	}
 
 	@Override
@@ -127,8 +148,24 @@ public class MySQLConnection implements DBConnection {
 
 	@Override
 	public Set<String> getCategories(String itemId) {
-		// TODO Auto-generated method stub
-		return null;
+		if (conn == null) {
+			return null;
+		}
+		Set<String> categories = new HashSet<>();
+		try {
+			String sql = "SELECT category from categories WHERE item_id = ? ";
+			PreparedStatement statement = conn.prepareStatement(sql);
+			statement.setString(1, itemId);
+			ResultSet rs = statement.executeQuery();
+			while (rs.next()) {
+				String category = rs.getString("category");
+				categories.add(category);
+			}
+		} catch (SQLException e) {
+			System.out.println(e.getMessage());
+		}
+		return categories;
+
 	}
 
 	@Override
